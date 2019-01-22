@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:html';
 import 'dart:math';
 import 'dart:web_audio';
-
 import 'package:rxdart/rxdart.dart';
+
 
 const baseFrequency = 432; // A4
 
@@ -113,7 +113,6 @@ class Notes {
   static const G = 10;
   static const Gis = 11;
   static const As = 11;
-//'A', 'Bes', 'B', 'C', 'Des', 'D', 'Es', 'E', 'F', 'Ges', 'G', ' As'];
 }
 
 const mayor = true;
@@ -153,6 +152,9 @@ class FingerNotes {
 
 int _mayor(bool mayor, int note) => mayor ? note : note - 1;
 
+class Measure {
+
+}
 class Chord {
   final int note;
   final bool mayor;

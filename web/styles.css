@@ -6,9 +6,68 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Roboto', sans-serif;
+  background-color: hsl(0, 0%, 95%);
 }
 
-#output {
+article {
+  box-shadow: 0 0 8px 0 grey;
+  margin: 20px;
+  background-color: white;
+  border: 0px solid transparent;
+}
+
+article > * {
   padding: 20px;
+}
+article > header {
+  font-weight: bold;
+  font-size: large;
+}
+.control > label {
+  display: block;
+}
+
+.notes {
+  display: flex;
+  position: relative;
+}
+.notes > div {
+  width: 40px;
+  height: 100px;
   text-align: center;
+  font-size: 8px;
+  position: relative;
+  outline: 1px solid hsla(0, 0%, 0%, .5);
+}
+.notes>:nth-child(2),
+.notes>:nth-child(7) {
+  height: 20px;
+  position: absolute;
+  top: 0;
+  left: 20px;
+  z-index: 1;
+}
+.notes>:nth-child(7) { left: 140px }
+
+.notes>:nth-child(4),
+.notes>:nth-child(9),
+.notes>:nth-child(11) {
+  height: 50px;
+  margin-top: 50px;
+}
+.notes>:nth-child(5),
+.notes>:nth-child(10),
+.notes>:nth-child(12) {
+  height: 50px;
+  position: absolute;
+  top: 0;
+  left: 80px;
+}
+.notes>:nth-child(10) { left: 200px }
+.notes>:nth-child(12) { left: 240px }
+
+.notes>:nth-child(3)::after {
+  background-color: hsla(0, 0%, 50%, .5);
+  content: '';
+  position: absolute; 
 }
