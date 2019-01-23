@@ -4,29 +4,25 @@ import 'instrument/metronome.dart';
 import 'view/tone.dart';
 import 'view/master.dart';
 import 'view/metronome.dart';
+import 'package:rxdart/rxdart.dart';
+import 'music_util.dart';
 
 void main() {
-  final metronomeView = MetronomeView();
   final timerWorker = Worker("tmp/metronomeworker.js");
+  final metronomeView = MetronomeView();
   final masterView = MasterView();
+  final toneView = ToneView(masterView.master$);
   final audioContext = AudioContext();
-  final metronome = Metronome(audioContext);
-
-  final toneView = ToneView();
+  final metronome = Metronome(audioContext, masterView.master$);
 
   document.body
     ..append(masterView.element)
     ..append(metronomeView.element)
     ..append(toneView.element);
 
-  masterView.output$.listen((e) {
-    metronome.master = e;
-    toneView.setBaseNote(e.baseNote);
-  });
+  metronomeView.resolution$.listen((e) => metronome.rhythm = e);
 
-  metronomeView.resolution$.listen((e) => metronome.noteResolution = e);
-
-  masterView.output$.map((e) => e.isPlaying).distinct().listen((b) {
+  masterView.master$.map((e) => e.isPlaying).distinct().listen((b) {
     if (b) {
       timerWorker.postMessage("start");
     } else {
@@ -37,11 +33,12 @@ void main() {
 
   metronome.note$.listen(metronomeView.draw);
 
-  toneView.note$.listen((n) {
-    print(n.name);
+  Observable.combineLatest2(masterView.master$, toneView.note$, (m, n) => [m,n]).listen((e) {
+    final m = e.first;
+    final n = e.last;
     audioContext.createOscillator()
         ..connectNode(audioContext.destination)
-        ..frequency.value = n.baseFrequency
+        ..frequency.value = toFrequency(n, m.baseNote.baseFrequency)
         ..start2(audioContext.currentTime)
         ..stop(audioContext.currentTime + .5);
   });

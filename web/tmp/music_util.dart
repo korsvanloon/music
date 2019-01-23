@@ -17,9 +17,9 @@ const noteNames = <String>[
   'Gis',
 ];
 
-const baseFrequency = 432.0;
-double toFrequency(int a, [base = baseFrequency]) {
-  return baseFrequency * pow(2, a / 12);
+// const baseFrequency = 432.0;
+double toFrequency(int a, num base) {
+  return base * pow(2, a / 12);
 }
 
 class Note {
@@ -49,5 +49,65 @@ class Note {
   static const all = [A, Ais, B, C, Cis, D, Dis, E, F, Fis, G, Gis];
 }
 
-HslColor hsl(String s) =>
-      HslColor(360 * noteNames.indexOf(s) / 12, 100, 50);
+class RelativeNote {
+  /// 0 = baseNote
+  final int offset;
+
+  /// in beats
+  final double length;
+
+  /// in beats
+  final double position;
+
+  RelativeNote(this.offset, this.length, this.position);
+
+  double asFrequency(double base) => toFrequency(offset, base);
+}
+
+HslColor hsl(String s) => HslColor(360 * noteNames.indexOf(s) / 12, 100, 50);
+
+class Rhythm {
+  final String name;
+  final Iterable<num> hits;
+
+  const Rhythm(this.name, this.hits);
+
+  static const onBeat = Rhythm('on beat', const [0, 1, 2, 3]);
+  static const offBeat = Rhythm('offBeat', const [0.5, 1.5, 2.5, 3.5]);
+  static const doubled =
+      Rhythm('doubled', const [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]);
+  static const gallop =
+      Rhythm('gallop', const [0.5, 0.75, 1.5, 1.75, 2.5, 2.75, 3.5, 3.75]);
+  static const fullOn = Rhythm('fullOn', const [
+    0.25,
+    0.5,
+    0.75,
+    1.25,
+    1.5,
+    1.75,
+    2.25,
+    2.5,
+    2.75,
+    3.25,
+    3.5,
+    3.75
+  ]);
+  static const continous = Rhythm('continous', const [
+    0,
+    0.25,
+    0.5,
+    0.75,
+    1,
+    1.25,
+    1.5,
+    1.75,
+    2,
+    2.25,
+    2.5,
+    2.75,
+    3,
+    3.25,
+    3.5,
+    3.75
+  ]);
+}

@@ -5,7 +5,7 @@ import '../music_util.dart';
 import '../instrument/instrument.dart';
 
 class MasterView {
-  Observable<MasterData> get output$ {
+  Observable<MasterData> get master$ {
     return Observable.combineLatest3(
         Observable(_baseFrequencySelect.onChange)
             .map((e) => (e.target as SelectElement).selectedIndex)
@@ -17,7 +17,7 @@ class MasterView {
         Observable(_playButton.onClick)
             .scan((p, e, i) => !p, false)
             .startWith(false),
-        (f, b, p) => MasterData(baseNote: f, bpm: b, isPlaying: p));
+        (n, b, p) => MasterData(baseNote: n, bpm: b, isPlaying: p));
   }
 
   final HtmlElement element = Element.article();
@@ -42,7 +42,7 @@ class MasterView {
           ..value = '120'))
         ..append(selectControl(_baseFrequencySelect, label: 'Base Note', options: noteNames));
 
-    output$.listen((m) {
+    master$.listen((m) {
       _playButton.text = m.isPlaying ? 'stop' : 'play';
       bpmLabel.text = m.bpm.toString();
     });

@@ -1,7 +1,7 @@
 import 'dart:html';
 
 DivElement selectControl( SelectElement select,
-    {String label, List<String> options, }) {
+    {String label, Iterable<String> options, }) {
   return DivElement()
     ..className = 'control'
     ..append(LabelElement()

@@ -1,14 +1,15 @@
-import 'dart:async';
 import 'dart:html';
 
 import 'package:rxdart/rxdart.dart';
 
 import '../element_util.dart';
+import '../music_util.dart';
 
 class MetronomeView {
-  Observable<int> get resolution$ => Observable(_resolutionSelect.onChange)
+  Observable<Rhythm> get resolution$ => Observable(_resolutionSelect.onChange)
       .map((e) => (e.target as SelectElement).selectedIndex)
-      .startWith(_resolutionSelect.selectedIndex);
+      .startWith(_resolutionSelect.selectedIndex)
+      .map((e) => _rhythms[e]);
 
   final HtmlElement element = Element.article();
 
@@ -22,7 +23,7 @@ class MetronomeView {
       ..append(selectControl(
         _resolutionSelect,
         label: 'Resolution',
-        options: ['16th notes', '8th notes', '4th notes'],
+        options: _rhythms.map((r) => r.name),
       ))
       ..append(DivElement()..append(_thing));
   }
@@ -38,6 +39,7 @@ class MetronomeView {
     _thing.style.width = '${factor * 20}px';
   }
 
+  static const _rhythms = [Rhythm.onBeat, Rhythm.doubled, Rhythm.continous, Rhythm.gallop, Rhythm.fullOn, Rhythm.offBeat];
   final DivElement _thing = DivElement();
   final SelectElement _resolutionSelect = SelectElement()
     ..id = 'metronome_resolution';
