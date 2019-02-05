@@ -1,30 +1,31 @@
 import 'dart:html';
+import 'package:music/music_util.dart';
+import 'package:music/state.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../instrument/instrument.dart';
-import '../music_util.dart';
-
 class ToneView {
+  ToneView() {
+    element.children = [
+      Element.header()..text = 'Notes',
+      DivElement()
+        ..children = [
+          _notesContainer
+            ..className = 'notes'
+            ..children = List.generate(25, (i) => DivElement()),
+        ],
+    ];
+
+    store.tonic$.listen(update);
+  }
   final HtmlElement element = Element.article();
 
   Observable<int> get note$ => Observable(_notesContainer.onClick)
       .map((e) => _notesContainer.children.indexOf(e.target as Element) - 12);
 
-  ToneView(Stream<MasterData> master$) {
-    element
-      ..append(Element.header()..text = 'Notes')
-      ..append(DivElement()
-        ..append(_notesContainer
-          ..className = 'notes'
-          ..children = List.generate(25, (i) => DivElement())));
-
-    master$.listen(update);
-  }
-
-  void update(MasterData master) {
-    final notes = Note.all
-        .skipWhile((k) => k != master.baseNote)
-        .followedBy(Note.all.takeWhile(((k) => k != master.baseNote)))
+  void update(Tonic tonic) {
+    final notes = Tonic.all
+        .skipWhile((k) => k != tonic)
+        .followedBy(Tonic.all.takeWhile((k) => k != tonic))
         .toList();
 
     for (var i = 0; i < _notesContainer.children.length; i++) {
@@ -35,6 +36,5 @@ class ToneView {
     }
   }
 
-  MasterData _master;
   final _notesContainer = DivElement();
 }
